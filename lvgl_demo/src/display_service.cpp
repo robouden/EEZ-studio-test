@@ -12,6 +12,7 @@
 #include "demos/music/lv_demo_music.h"
 #include "demos/keypad_encoder/lv_demo_keypad_encoder.h"
 
+#include "eez-project/ui.h"
 
 extern TFT_eSPI tft = TFT_eSPI(); //load tft service
 extern tp_service tp;             //load tp service
@@ -68,7 +69,8 @@ void ICACHE_FLASH_ATTR display_service::lv_setup()
   disp_drv.draw_buf = &disp_buf;
   lv_disp_drv_register(&disp_drv);
    
-  lv_demo_widgets();
+  //lv_demo_widgets();
+  ui_init();
 // #ifdef _DEBUG_
 //   Serial.print(F("[INFO] Display GUI setup finished! \n"));
 // #endif
@@ -153,6 +155,7 @@ void IRAM_ATTR display_service::loop()
 {
 
   lv_timer_handler(); /* let the GUI do its work */
+  ui_tick();
     delay( 5 );
   // lv_task_handler(); /* let the GUI do its work */
     // delay( 5 );
