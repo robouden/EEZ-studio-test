@@ -1,3 +1,0 @@
-[submodule "lvgl_demo/libs/eez-framework"]
-	path = lvgl_demo/libs/eez-framework
-	url = https://github.com/eez-open/eez-framework
