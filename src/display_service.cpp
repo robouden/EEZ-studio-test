@@ -3,7 +3,6 @@
 #include "display_service.h"
 #include <lvgl.h>
 #include <TFT_eSPI.h>
-#include "gt911.h"
 #include "esp_freertos_hooks.h"
 #include "demos/lv_demos.h"
 #include "demos/widgets/lv_demo_widgets.h"
@@ -15,7 +14,6 @@
 #include "eez-project/ui.h"
 
 extern TFT_eSPI tft = TFT_eSPI(); //load tft service
-extern tp_service tp;             //load tp service
 
 display_service::display_service() {}
 display_service::~display_service() {}
@@ -33,7 +31,6 @@ static lv_color_t buf2[DISP_BUF_SIZE];
 void ICACHE_FLASH_ATTR display_service::touch_setup()
 {
 
-  tp.setup();
   static lv_indev_drv_t indev_drv;
   lv_indev_drv_init( &indev_drv );
   indev_drv.type = LV_INDEV_TYPE_POINTER;
@@ -51,7 +48,9 @@ void ICACHE_FLASH_ATTR display_service::lv_setup()
   lv_init();
 
   tft.begin();               /* TFT init */
+  tft.invertDisplay(1);
   tft.setRotation(ROTATION); /* Landscape orientation */
+  tft.initDMA();
 #if (BUF_NUM == 1)
   // lv_disp_buf_init(&disp_buf, buf1, NULL, DISP_BUF_SIZE);
   lv_disp_draw_buf_init( &disp_buf, buf1, NULL, DISP_BUF_SIZE );
@@ -169,7 +168,9 @@ void IRAM_ATTR display_service::my_disp_flush(lv_disp_drv_t *disp, const lv_area
 
     tft.setAddrWindow(area->x1, area->y1, w, h);
     tft.startWrite();
-    tft.pushColors(&color_p->full, w * h, true);
+    //tft.pushColors(&color_p->full, w * h, true);
+    tft.setSwapBytes(true);
+    tft.pushPixelsDMA(&color_p->full, w * h); // Push line to screen
     tft.endWrite();
 
     lv_disp_flush_ready(disp);

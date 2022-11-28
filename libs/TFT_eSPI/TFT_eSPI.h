@@ -67,7 +67,7 @@
 
 // If the SPI frequency is not defined, set a default
 #ifndef SPI_FREQUENCY
-  #define SPI_FREQUENCY  20000000
+  #define SPI_FREQUENCY  40000000
 #endif
 
 // If the SPI read frequency is not defined, set a default

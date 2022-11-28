@@ -33,7 +33,6 @@ RST:D23
 #include "soc/timer_group_reg.h"     //for wdt
 #include "config.h"
 #include "io_service.h"
-#include "gt911.h"
 #include "display_service.h"
 
 
@@ -41,8 +40,6 @@ TaskHandle_t cpu0 = NULL;
 TaskHandle_t cpu1 = NULL;
 io_service io;           //load IO control service
 display_service display; //load display service
-tp_service tp;
-
 
 inline void feedTheDog(){
   // feed dog 0
@@ -72,7 +69,6 @@ void setup_cpu0(void *pvParameters){
 
 void setup_cpu1(void *pvParameters){
     io.setup();
-    tp.setup();
     for(;;) {
           loop_cpu1();
       }
