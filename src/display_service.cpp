@@ -168,9 +168,15 @@ void IRAM_ATTR display_service::my_keypad_read(lv_indev_drv_t *indev_driver, lv_
     bool isPressed;
     m5stack_keypad_read(button, isPressed);
 
+    bool isKeyboardWidgetFocused = false;
+    lv_obj_t *focusedObj = lv_group_get_focused(keypad_group);
+    if (focusedObj && focusedObj->class_p == &lv_keyboard_class) {
+        isKeyboardWidgetFocused = true;
+    }
+
     data->key = 
-        button == MY_BUTTON_A ? LV_KEY_NEXT :
-        button == MY_BUTTON_B ? LV_KEY_PREV :
+        button == MY_BUTTON_A ? (isKeyboardWidgetFocused ? LV_KEY_LEFT : LV_KEY_PREV) :
+        button == MY_BUTTON_B ? (isKeyboardWidgetFocused ? LV_KEY_RIGHT : LV_KEY_NEXT) :
         button == MY_BUTTON_C ? LV_KEY_ENTER :
         0;
 
