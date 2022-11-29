@@ -13,6 +13,10 @@
 
 #include "eez-project/ui.h"
 
+#ifdef KEYPAD
+#include "keypad.h"
+#endif
+
 extern TFT_eSPI tft = TFT_eSPI(); //load tft service
 
 display_service::display_service() {}
@@ -36,6 +40,20 @@ void ICACHE_FLASH_ATTR display_service::touch_setup()
   indev_drv.type = LV_INDEV_TYPE_POINTER;
   indev_drv.read_cb = my_touchpad_read;
   lv_indev_drv_register( &indev_drv ); 
+}
+#endif
+
+#ifdef KEYPAD
+extern lv_group_t *keypad_group;
+void ICACHE_FLASH_ATTR display_service::keypad_setup()
+{
+  static lv_indev_drv_t indev_drv;
+  lv_indev_drv_init( &indev_drv );
+  indev_drv.type = LV_INDEV_TYPE_KEYPAD;
+  indev_drv.read_cb = my_keypad_read;
+  lv_indev_t *keypad_indev = lv_indev_drv_register( &indev_drv );
+
+  lv_indev_set_group(keypad_indev, keypad_group);
 }
 #endif
 
@@ -70,6 +88,10 @@ void ICACHE_FLASH_ATTR display_service::lv_setup()
    
   //lv_demo_widgets();
   ui_init();
+
+  extern void ui_init_input_groups();
+  ui_init_input_groups();
+
 // #ifdef _DEBUG_
 //   Serial.print(F("[INFO] Display GUI setup finished! \n"));
 // #endif
@@ -77,7 +99,6 @@ void ICACHE_FLASH_ATTR display_service::lv_setup()
 
 void ICACHE_FLASH_ATTR display_service::setup()
 {
-
   lv_setup();
 
   esp_register_freertos_tick_hook(lv_tick_task);
@@ -88,6 +109,10 @@ void ICACHE_FLASH_ATTR display_service::setup()
 #ifdef TOUCHPAD
   touch_setup();
 #endif
+#ifdef KEYPAD
+  keypad_setup();
+#endif
+
   // lv_main();
 
 } // end display service setup
@@ -137,6 +162,25 @@ void IRAM_ATTR display_service::my_touchpad_read(lv_indev_drv_t *indev_driver, l
 }
 #endif
 
+#ifdef KEYPAD
+void IRAM_ATTR display_service::my_keypad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data) {
+    uint32_t button;
+    bool isPressed;
+    m5stack_keypad_read(button, isPressed);
+
+    data->key = 
+        button == MY_BUTTON_A ? LV_KEY_NEXT :
+        button == MY_BUTTON_B ? LV_KEY_PREV :
+        button == MY_BUTTON_C ? LV_KEY_ENTER :
+        0;
+
+    if (isPressed) {
+        data->state = LV_INDEV_STATE_PRESSED;
+    } else {
+        data->state = LV_INDEV_STATE_RELEASED;
+    }
+}
+#endif
 
 void IRAM_ATTR display_service::lv_main()
 {

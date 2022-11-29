@@ -5,7 +5,7 @@
 #define ROTATION 0          //set ui rotation
 //#define TOUCHPAD //whether the UI support touch pad
 // #define _TP_DEBUG_ //TP debug
-
+#define KEYPAD
 
 
 
