@@ -1,4 +1,4 @@
-<img src="./Nscreen32-lvgl-eez.png" width="400" alt="M5Stack board running LVGL with EEZ-Framework demo" title="M5Stack board running LVGL with EEZ-Framework demo"/>
+<img src="./M5Stack-lvgl-eez.png" width="400" alt="M5Stack board running LVGL with EEZ-Framework demo" title="M5Stack board running LVGL with EEZ-Framework demo"/>
 
 Before everything start, please power on your board, and check it if it works.
 
