@@ -199,13 +199,14 @@ void IRAM_ATTR display_service::lv_main()
 
 }
 
-
 void IRAM_ATTR display_service::loop()
 {
 
   lv_timer_handler(); /* let the GUI do its work */
   ui_tick();
     delay( 5 );
+
+
   // lv_task_handler(); /* let the GUI do its work */
     // delay( 5 );
 } //end loop

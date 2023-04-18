@@ -95,7 +95,16 @@ void setup()
                     1);          /* pin task to core 1 */
 }
 
+extern bool ledstate;
+
 void loop(void)
 {
   feedTheDog();
+
+    static uint32_t time1;
+    uint32_t time2 = millis();
+    if (time2 - time1 >= 1000) {
+        time1 = time2;
+        ledstate = !ledstate;
+    }  
 }

@@ -11,13 +11,15 @@ typedef struct _objects_t {
     lv_obj_t *main;
     lv_obj_t *page1;
     lv_obj_t *page2;
+    lv_obj_t *_obj_keyboard_0;
+    lv_obj_t *eez_logo;
+    lv_obj_t *formatted_textarea;
+    lv_obj_t *home_button_1;
+    lv_obj_t *home_button_2;
     lv_obj_t *page1_button;
     lv_obj_t *page2_button;
-    lv_obj_t *eez_logo;
-    lv_obj_t *home_button_1;
     lv_obj_t *txtarea1;
-    lv_obj_t *home_button_2;
-    lv_obj_t *keyboard_1;
+    lv_obj_t *value_textarea;
 } objects_t;
 
 extern objects_t objects;

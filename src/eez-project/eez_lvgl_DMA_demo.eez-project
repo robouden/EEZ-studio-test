@@ -88,7 +88,7 @@
         {
           "objID": "292907a7-7032-4814-e210-405def21551e",
           "fileName": "ui.c",
-          "template": "#include \"ui.h\"\n#include \"screens.h\"\n#include \"images.h\"\n#include \"flow_def.h\"\n\nvoid ui_init() {\n    eez_flow_init(assets, sizeof(assets), (lv_obj_t **)&objects, sizeof(objects), images, sizeof(images));\n}\n\nvoid ui_tick() {\n    eez_flow_tick();\n    tick_screen(g_currentScreen);\n}\n"
+          "template": "#include \"ui.h\"\n#include \"screens.h\"\n#include \"images.h\"\n#include \"flow_def.h\"\n#include \"actions.h\"\n\n//${eez-studio LVGL_ACTIONS_ARRAY_DEF}\n\nvoid ui_init() {\n    eez_flow_init(assets, sizeof(assets), (lv_obj_t **)&objects, sizeof(objects), images, sizeof(images), actions);\n}\n\nvoid ui_tick() {\n    eez_flow_tick();\n    tick_screen(g_currentScreen);\n}\n"
         }
       ],
       "destinationFolder": ".",
@@ -97,11 +97,913 @@
   },
   "variables": {
     "objID": "c6c71e16-53e1-217f-d03b-cef56c6b037a",
-    "globalVariables": [],
+    "globalVariables": [
+      {
+        "objID": "486722d8-023d-4947-c341-56543cffbb28",
+        "name": "prefixes",
+        "type": "array:string",
+        "defaultValue": "[ \"n\",\"u\", \"m\", \"\", \"k\", \"M\", \"G\" ]",
+        "persistent": false
+      }
+    ],
     "structures": [],
     "enums": []
   },
-  "actions": [],
+  "actions": [
+    {
+      "objID": "594c799a-576b-4045-ed57-b8731fb381a7",
+      "components": [
+        {
+          "objID": "d29207eb-6d69-4cd5-a87a-3609018d40ed",
+          "type": "InputActionComponent",
+          "left": -506,
+          "top": -226,
+          "width": 87,
+          "height": 25,
+          "customInputs": [],
+          "customOutputs": [],
+          "name": "value",
+          "inputType": "float"
+        },
+        {
+          "objID": "7703da98-7581-4fe0-b380-26239f14e184",
+          "type": "OutputActionComponent",
+          "left": 3635,
+          "top": -234,
+          "width": 87,
+          "height": 25,
+          "customInputs": [],
+          "customOutputs": [],
+          "name": "str",
+          "outputType": "string"
+        },
+        {
+          "objID": "2edfae8e-1fa5-4cf4-8064-0b1e01c31497",
+          "type": "InputActionComponent",
+          "left": -373,
+          "top": -151,
+          "width": 108,
+          "height": 25,
+          "customInputs": [],
+          "customOutputs": [],
+          "name": "show_prefix",
+          "inputType": "boolean"
+        },
+        {
+          "objID": "3ae95035-e9bf-4c2c-b0ad-eecda280f02e",
+          "type": "InputActionComponent",
+          "left": 445,
+          "top": -175,
+          "width": 139,
+          "height": 25,
+          "customInputs": [],
+          "customOutputs": [],
+          "name": "digits_after_point",
+          "inputType": "integer"
+        },
+        {
+          "objID": "17078ba0-3fda-4d43-92d7-86ce90cf64d6",
+          "type": "SwitchActionComponent",
+          "left": -106,
+          "top": -251,
+          "width": 209,
+          "height": 74,
+          "customInputs": [
+            {
+              "objID": "21e88334-b0de-4cff-e257-93717628fcce",
+              "name": "show",
+              "type": "boolean"
+            }
+          ],
+          "customOutputs": [],
+          "description": "Use prefixes?",
+          "tests": [
+            {
+              "objID": "59738e67-7a3d-4f51-cd9f-58d8234dee56",
+              "condition": "show == true",
+              "outputName": "prefix",
+              "outputValue": "1"
+            },
+            {
+              "objID": "300a455f-b2af-43e7-e5fa-9fefb9c81c04",
+              "condition": "true",
+              "outputName": "no_prefix",
+              "outputValue": "1"
+            }
+          ]
+        },
+        {
+          "objID": "fbcd9d4b-9079-4914-8a9f-0a3c80f70ae3",
+          "type": "EvalExprActionComponent",
+          "left": 187,
+          "top": -327,
+          "width": 421,
+          "height": 55,
+          "customInputs": [],
+          "customOutputs": [],
+          "description": "Calc prefix (multiple of 3 - engineering style)",
+          "expression": "Math.floor(Math.min(9,Math.max(-6,Math.log10(my_value)/3)))"
+        },
+        {
+          "objID": "507cf6f9-60be-4c96-932e-e8f9057a44fd",
+          "type": "EvalExprActionComponent",
+          "left": 506,
+          "top": -80,
+          "width": 87,
+          "height": 55,
+          "customInputs": [],
+          "customOutputs": [],
+          "description": "no prefix",
+          "expression": "0"
+        },
+        {
+          "objID": "ca109bf4-aec7-46cf-fd77-d7e47fc401cb",
+          "type": "EvalExprActionComponent",
+          "left": 788,
+          "top": -342,
+          "width": 199,
+          "height": 73,
+          "customInputs": [
+            {
+              "objID": "195c4c77-cb09-4e6b-cf9c-e22bd27beff1",
+              "name": "digits",
+              "type": "integer"
+            },
+            {
+              "objID": "fc43f18c-288c-48a6-ec19-c4d6cd0a53f9",
+              "name": "scale",
+              "type": "integer"
+            }
+          ],
+          "customOutputs": [],
+          "description": "Calc multiplier for roundoff",
+          "expression": "scale*3 - digits"
+        },
+        {
+          "objID": "ef3ef2c4-e9dd-43f3-a7f4-8bd96b93c116",
+          "type": "EvalExprActionComponent",
+          "left": 1275,
+          "top": -376,
+          "width": 492,
+          "height": 92,
+          "customInputs": [
+            {
+              "objID": "4ef3d975-84d4-42c1-def7-013883c64e92",
+              "name": "integer",
+              "type": "integer"
+            },
+            {
+              "objID": "caff6c5c-edc7-4e6a-ab90-8520d25c6037",
+              "name": "int_base",
+              "type": "float"
+            },
+            {
+              "objID": "227917d0-cf4c-41b8-95b2-46f773a2d048",
+              "name": "roundoff",
+              "type": "float"
+            }
+          ],
+          "customOutputs": [],
+          "description": "Rounded fraction ",
+          "expression": "Math.round((my_value/roundoff)-((integer*int_base)/roundoff))"
+        },
+        {
+          "objID": "3a1ad2ec-c245-41aa-b04a-54050b8491e1",
+          "type": "SetVariableActionComponent",
+          "left": -356,
+          "top": -252,
+          "width": 151,
+          "height": 56,
+          "customInputs": [
+            {
+              "objID": "aa23e1f8-1102-42d9-f4b3-4e3aed4c50c8",
+              "name": "in",
+              "type": "float"
+            }
+          ],
+          "customOutputs": [],
+          "entries": [
+            {
+              "objID": "f6bc82b3-7b0d-4001-89c4-af5791c32228",
+              "variable": "my_value",
+              "value": "in"
+            }
+          ]
+        },
+        {
+          "objID": "eb517b46-e17e-4f7d-d25e-425139a153fd",
+          "type": "EvalExprActionComponent",
+          "left": 3119,
+          "top": -226,
+          "width": 394,
+          "height": 111,
+          "customInputs": [
+            {
+              "objID": "a811f420-7048-46a2-c810-5878a3b02899",
+              "name": "integer",
+              "type": "integer"
+            },
+            {
+              "objID": "b75056e2-213e-4e40-b9d5-f9d34e8ce9da",
+              "name": "fraction",
+              "type": "string"
+            },
+            {
+              "objID": "248ab1aa-b2ea-43ea-b490-7e43c6c69053",
+              "name": "prefix",
+              "type": "string"
+            },
+            {
+              "objID": "107cf602-b464-4de8-ca55-5ea8d999ef04",
+              "name": "unit",
+              "type": "string"
+            }
+          ],
+          "customOutputs": [],
+          "description": "Compose string",
+          "expression": "integer + \".\" + fraction + \" \" + prefix + unit"
+        },
+        {
+          "objID": "b293469c-3be0-42c3-f1ec-c2b5abb0ba1d",
+          "type": "EvalExprActionComponent",
+          "left": 854,
+          "top": -80,
+          "width": 157,
+          "height": 55,
+          "customInputs": [
+            {
+              "objID": "783f2442-3388-410c-be4c-bcf76a8ea116",
+              "name": "x",
+              "type": "integer"
+            }
+          ],
+          "customOutputs": [],
+          "description": "select prefix string",
+          "expression": "prefixes[x+3]"
+        },
+        {
+          "objID": "9e1db9c3-92b4-402b-fe2e-c1eb1d3d0adf",
+          "type": "EvalExprActionComponent",
+          "left": 1184,
+          "top": -585,
+          "width": 324,
+          "height": 55,
+          "customInputs": [
+            {
+              "objID": "51b3333e-4356-4709-8070-91e01dfa7f4d",
+              "name": "prefix_div",
+              "type": "float"
+            }
+          ],
+          "customOutputs": [],
+          "description": "Integer part",
+          "expression": "Math.floor(my_value / prefix_div)"
+        },
+        {
+          "objID": "e9e0196c-f589-4077-df4b-09faba2ed70f",
+          "type": "CallActionActionComponent",
+          "left": 955,
+          "top": -585,
+          "width": 87,
+          "height": 73,
+          "customInputs": [],
+          "customOutputs": [],
+          "description": "Integer base",
+          "action": "pow"
+        },
+        {
+          "objID": "0097c962-7eb2-4ba0-bcea-dd9202653a45",
+          "type": "ConstantActionComponent",
+          "left": 800,
+          "top": -611,
+          "width": 87,
+          "height": 54,
+          "customInputs": [],
+          "customOutputs": [],
+          "value": "10"
+        },
+        {
+          "objID": "875dd07e-f4d5-40c2-941e-4bbe3043a95a",
+          "type": "EvalExprActionComponent",
+          "left": 798,
+          "top": -512,
+          "width": 106,
+          "height": 55,
+          "customInputs": [
+            {
+              "objID": "b4e87e6a-818c-46a0-e50d-442e03689c28",
+              "name": "in",
+              "type": "integer"
+            }
+          ],
+          "customOutputs": [],
+          "expression": "in*3"
+        },
+        {
+          "objID": "efb54ea3-14c8-4f4a-836e-5dfb35457084",
+          "type": "CallActionActionComponent",
+          "left": 1097,
+          "top": -293,
+          "width": 87,
+          "height": 73,
+          "customInputs": [],
+          "customOutputs": [],
+          "description": "roundoff base fraction",
+          "action": "pow"
+        },
+        {
+          "objID": "6415e82c-99f8-4d6f-8aad-51c5e2c9f0ef",
+          "type": "ConstantActionComponent",
+          "left": 954,
+          "top": -410,
+          "width": 87,
+          "height": 54,
+          "customInputs": [],
+          "customOutputs": [],
+          "value": "10"
+        },
+        {
+          "objID": "33637695-3e2c-40f4-b919-fea0449e0c45",
+          "type": "EvalExprActionComponent",
+          "left": 1881,
+          "top": -271,
+          "width": 160,
+          "height": 73,
+          "customInputs": [
+            {
+              "objID": "bf86f521-fa95-4a31-fd7f-edcebef264e1",
+              "name": "in",
+              "type": "float"
+            },
+            {
+              "objID": "530998d3-8902-4ad1-e386-d7e34171f2dc",
+              "name": "roundoff",
+              "type": "float"
+            }
+          ],
+          "customOutputs": [],
+          "expression": "in + \"\""
+        },
+        {
+          "objID": "de9a7f9d-b7ca-4376-8528-f6eca28c0e0e",
+          "type": "EvalExprActionComponent",
+          "left": 2203,
+          "top": -231,
+          "width": 405,
+          "height": 73,
+          "customInputs": [
+            {
+              "objID": "aa4a916f-49a2-43b5-f947-51f9ba2832d8",
+              "name": "fractionStr",
+              "type": "string"
+            },
+            {
+              "objID": "697fff16-86f4-4b7f-f0fc-6001f8998853",
+              "name": "num_digits",
+              "type": "integer"
+            }
+          ],
+          "customOutputs": [],
+          "expression": "String.padStart(fractionStr, num_digits, \"0\")"
+        },
+        {
+          "objID": "848e1da7-c149-4547-960d-8f7738f4d670",
+          "type": "InputActionComponent",
+          "left": 2842,
+          "top": -65,
+          "width": 87,
+          "height": 25,
+          "customInputs": [],
+          "customOutputs": [],
+          "name": "unit",
+          "inputType": "string"
+        }
+      ],
+      "connectionLines": [
+        {
+          "objID": "b5ff825f-d361-49ca-c799-d7d726b17eff",
+          "source": "2edfae8e-1fa5-4cf4-8064-0b1e01c31497",
+          "output": "@seqout",
+          "target": "17078ba0-3fda-4d43-92d7-86ce90cf64d6",
+          "input": "show"
+        },
+        {
+          "objID": "ccccd49f-eaf3-459f-86e1-d3c7161b1fc8",
+          "source": "17078ba0-3fda-4d43-92d7-86ce90cf64d6",
+          "output": "prefix",
+          "target": "fbcd9d4b-9079-4914-8a9f-0a3c80f70ae3",
+          "input": "@seqin"
+        },
+        {
+          "objID": "29343e7e-b09b-41e3-f13c-1aae82cb5c6c",
+          "source": "17078ba0-3fda-4d43-92d7-86ce90cf64d6",
+          "output": "no_prefix",
+          "target": "507cf6f9-60be-4c96-932e-e8f9057a44fd",
+          "input": "@seqin"
+        },
+        {
+          "objID": "1a7af66d-f4ec-4b96-9a72-669b64c7ce0f",
+          "source": "fbcd9d4b-9079-4914-8a9f-0a3c80f70ae3",
+          "output": "result",
+          "target": "ca109bf4-aec7-46cf-fd77-d7e47fc401cb",
+          "input": "scale"
+        },
+        {
+          "objID": "95d4b13a-6590-4289-c98f-cc9f7d8ddc8f",
+          "source": "3ae95035-e9bf-4c2c-b0ad-eecda280f02e",
+          "output": "@seqout",
+          "target": "ca109bf4-aec7-46cf-fd77-d7e47fc401cb",
+          "input": "digits"
+        },
+        {
+          "objID": "dc013790-5485-4216-d3ed-c81794790089",
+          "source": "507cf6f9-60be-4c96-932e-e8f9057a44fd",
+          "output": "result",
+          "target": "ca109bf4-aec7-46cf-fd77-d7e47fc401cb",
+          "input": "scale"
+        },
+        {
+          "objID": "bb8202c2-9d50-4b21-edb9-c7cbcdc3c14a",
+          "source": "d29207eb-6d69-4cd5-a87a-3609018d40ed",
+          "output": "@seqout",
+          "target": "3a1ad2ec-c245-41aa-b04a-54050b8491e1",
+          "input": "in"
+        },
+        {
+          "objID": "2c51b29c-8d16-42b2-9da7-5d1966ea9dd4",
+          "source": "3a1ad2ec-c245-41aa-b04a-54050b8491e1",
+          "output": "@seqout",
+          "target": "17078ba0-3fda-4d43-92d7-86ce90cf64d6",
+          "input": "@seqin"
+        },
+        {
+          "objID": "f83832cc-6b93-459a-b70d-81f22229b95e",
+          "source": "fbcd9d4b-9079-4914-8a9f-0a3c80f70ae3",
+          "output": "result",
+          "target": "b293469c-3be0-42c3-f1ec-c2b5abb0ba1d",
+          "input": "x"
+        },
+        {
+          "objID": "83adbf55-e502-43dc-ca6a-9cef6c82fd1a",
+          "source": "b293469c-3be0-42c3-f1ec-c2b5abb0ba1d",
+          "output": "result",
+          "target": "eb517b46-e17e-4f7d-d25e-425139a153fd",
+          "input": "prefix"
+        },
+        {
+          "objID": "44cb8a15-a30b-4e22-90a8-d561b751c6b3",
+          "source": "507cf6f9-60be-4c96-932e-e8f9057a44fd",
+          "output": "result",
+          "target": "b293469c-3be0-42c3-f1ec-c2b5abb0ba1d",
+          "input": "x"
+        },
+        {
+          "objID": "b762050e-32d8-4052-ca40-28e38a816474",
+          "source": "9e1db9c3-92b4-402b-fe2e-c1eb1d3d0adf",
+          "output": "result",
+          "target": "ef3ef2c4-e9dd-43f3-a7f4-8bd96b93c116",
+          "input": "integer"
+        },
+        {
+          "objID": "1b57effe-24bf-4609-d764-9617b550cb14",
+          "source": "9e1db9c3-92b4-402b-fe2e-c1eb1d3d0adf",
+          "output": "result",
+          "target": "eb517b46-e17e-4f7d-d25e-425139a153fd",
+          "input": "integer"
+        },
+        {
+          "objID": "b33ca643-41c2-4b53-eecb-7413e705ad01",
+          "source": "eb517b46-e17e-4f7d-d25e-425139a153fd",
+          "output": "result",
+          "target": "7703da98-7581-4fe0-b380-26239f14e184",
+          "input": "@seqin"
+        },
+        {
+          "objID": "c8a4e98f-c5fd-4931-b6e7-a60b4a555903",
+          "source": "0097c962-7eb2-4ba0-bcea-dd9202653a45",
+          "output": "value",
+          "target": "e9e0196c-f589-4077-df4b-09faba2ed70f",
+          "input": "7eb4960f-f903-4086-897c-1496baf7b2cd"
+        },
+        {
+          "objID": "9e256e34-9606-4722-899a-edc23789e467",
+          "source": "e9e0196c-f589-4077-df4b-09faba2ed70f",
+          "output": "ea9738ec-db00-4a30-e315-a94ed9ad60e3",
+          "target": "9e1db9c3-92b4-402b-fe2e-c1eb1d3d0adf",
+          "input": "prefix_div"
+        },
+        {
+          "objID": "0f50d16a-33e0-4d8f-f029-ae7cb95f04f2",
+          "source": "875dd07e-f4d5-40c2-941e-4bbe3043a95a",
+          "output": "result",
+          "target": "e9e0196c-f589-4077-df4b-09faba2ed70f",
+          "input": "2e3d1ee7-0ada-4c2a-f8e9-1c0a8ba866dd"
+        },
+        {
+          "objID": "e5290714-a895-4441-9ba5-cce8ad661f2d",
+          "source": "fbcd9d4b-9079-4914-8a9f-0a3c80f70ae3",
+          "output": "result",
+          "target": "875dd07e-f4d5-40c2-941e-4bbe3043a95a",
+          "input": "in"
+        },
+        {
+          "objID": "5902a413-7349-4213-eb66-beeae345e48f",
+          "source": "507cf6f9-60be-4c96-932e-e8f9057a44fd",
+          "output": "result",
+          "target": "875dd07e-f4d5-40c2-941e-4bbe3043a95a",
+          "input": "in"
+        },
+        {
+          "objID": "c3c8e47c-40fe-4afb-859c-beaea5db56bf",
+          "source": "e9e0196c-f589-4077-df4b-09faba2ed70f",
+          "output": "ea9738ec-db00-4a30-e315-a94ed9ad60e3",
+          "target": "ef3ef2c4-e9dd-43f3-a7f4-8bd96b93c116",
+          "input": "int_base"
+        },
+        {
+          "objID": "20f664aa-9aad-4cc0-cac3-8cf7c3647fdf",
+          "source": "6415e82c-99f8-4d6f-8aad-51c5e2c9f0ef",
+          "output": "value",
+          "target": "efb54ea3-14c8-4f4a-836e-5dfb35457084",
+          "input": "7eb4960f-f903-4086-897c-1496baf7b2cd"
+        },
+        {
+          "objID": "051652f4-bb68-41b5-e385-6f378490e928",
+          "source": "ca109bf4-aec7-46cf-fd77-d7e47fc401cb",
+          "output": "result",
+          "target": "efb54ea3-14c8-4f4a-836e-5dfb35457084",
+          "input": "2e3d1ee7-0ada-4c2a-f8e9-1c0a8ba866dd"
+        },
+        {
+          "objID": "1bed27e3-605d-4633-abee-a25ed8b35682",
+          "source": "efb54ea3-14c8-4f4a-836e-5dfb35457084",
+          "output": "ea9738ec-db00-4a30-e315-a94ed9ad60e3",
+          "target": "ef3ef2c4-e9dd-43f3-a7f4-8bd96b93c116",
+          "input": "roundoff"
+        },
+        {
+          "objID": "4ebc7e0a-f48e-420a-8b38-306fcc79e421",
+          "source": "ef3ef2c4-e9dd-43f3-a7f4-8bd96b93c116",
+          "output": "result",
+          "target": "33637695-3e2c-40f4-b919-fea0449e0c45",
+          "input": "in"
+        },
+        {
+          "objID": "9029b1ae-c8b2-4589-df33-f6808ddb0e44",
+          "source": "efb54ea3-14c8-4f4a-836e-5dfb35457084",
+          "output": "ea9738ec-db00-4a30-e315-a94ed9ad60e3",
+          "target": "33637695-3e2c-40f4-b919-fea0449e0c45",
+          "input": "roundoff"
+        },
+        {
+          "objID": "6a10da2d-9deb-48e2-ec85-f5b0918d3fea",
+          "source": "33637695-3e2c-40f4-b919-fea0449e0c45",
+          "output": "result",
+          "target": "de9a7f9d-b7ca-4376-8528-f6eca28c0e0e",
+          "input": "fractionStr"
+        },
+        {
+          "objID": "69e51e93-7599-4f76-af36-e6a0940cfa56",
+          "source": "3ae95035-e9bf-4c2c-b0ad-eecda280f02e",
+          "output": "@seqout",
+          "target": "de9a7f9d-b7ca-4376-8528-f6eca28c0e0e",
+          "input": "num_digits"
+        },
+        {
+          "objID": "75e30295-08ef-4b95-fca3-042e23b4baa9",
+          "source": "de9a7f9d-b7ca-4376-8528-f6eca28c0e0e",
+          "output": "result",
+          "target": "eb517b46-e17e-4f7d-d25e-425139a153fd",
+          "input": "fraction"
+        },
+        {
+          "objID": "56bd7f23-863c-454b-8875-1e0a4bfe9e2c",
+          "source": "848e1da7-c149-4547-960d-8f7738f4d670",
+          "output": "@seqout",
+          "target": "eb517b46-e17e-4f7d-d25e-425139a153fd",
+          "input": "unit"
+        }
+      ],
+      "localVariables": [
+        {
+          "objID": "5f0985fe-e46b-4718-9706-6a953d8d1acf",
+          "name": "my_value",
+          "type": "float",
+          "defaultValue": "0",
+          "persistent": false
+        },
+        {
+          "objID": "884fa9bd-b25e-4a05-d233-9c6f27128e42",
+          "name": "loop_zeros",
+          "type": "integer",
+          "defaultValue": "0",
+          "persistent": false
+        },
+        {
+          "objID": "4e440b59-fec8-4bd6-df40-1c76d498b6de",
+          "name": "fraction_zeros",
+          "type": "string",
+          "defaultValue": "\"\"",
+          "persistent": false
+        }
+      ],
+      "name": "value2str",
+      "implementationType": "flow"
+    },
+    {
+      "objID": "e18425b4-a090-4c01-d62e-5c20b1f7ca4b",
+      "components": [
+        {
+          "objID": "7eb4960f-f903-4086-897c-1496baf7b2cd",
+          "type": "InputActionComponent",
+          "left": -449,
+          "top": -97,
+          "width": 87,
+          "height": 24,
+          "customInputs": [],
+          "customOutputs": [],
+          "name": "base",
+          "inputType": "float"
+        },
+        {
+          "objID": "2e3d1ee7-0ada-4c2a-f8e9-1c0a8ba866dd",
+          "type": "InputActionComponent",
+          "left": -464,
+          "top": 90,
+          "width": 87,
+          "height": 24,
+          "customInputs": [],
+          "customOutputs": [],
+          "name": "exp",
+          "inputType": "integer"
+        },
+        {
+          "objID": "ea9738ec-db00-4a30-e315-a94ed9ad60e3",
+          "type": "OutputActionComponent",
+          "left": 365,
+          "top": -85,
+          "width": 87,
+          "height": 24,
+          "customInputs": [],
+          "customOutputs": [],
+          "name": "result",
+          "outputType": "float"
+        },
+        {
+          "objID": "949eb495-ea5e-407b-cdd8-3b9fe140f388",
+          "type": "LoopActionComponent",
+          "left": -62,
+          "top": -145,
+          "width": 243,
+          "height": 87,
+          "customInputs": [
+            {
+              "objID": "b67cae36-c715-4f19-a892-6006628c9a63",
+              "name": "exp",
+              "type": "integer"
+            }
+          ],
+          "customOutputs": [],
+          "variable": "i",
+          "from": "0",
+          "to": "exp-1",
+          "step": "1",
+          "version": 1
+        },
+        {
+          "objID": "c83629ee-aa77-4f15-a0ed-593e1345a2bb",
+          "type": "SetVariableActionComponent",
+          "left": -303,
+          "top": -116,
+          "width": 132,
+          "height": 75,
+          "customInputs": [
+            {
+              "objID": "65d1b9d2-337e-4e40-a492-c24635e1c6be",
+              "name": "in",
+              "type": "float"
+            }
+          ],
+          "customOutputs": [],
+          "entries": [
+            {
+              "objID": "f2f55c53-a282-4fae-f368-f6b836e81cbc",
+              "variable": "base",
+              "value": "in"
+            },
+            {
+              "objID": "7247ec63-8dd8-442c-d023-5dafaf9042f3",
+              "variable": "x",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "objID": "33308e55-ca44-4279-b8e9-07329486c9a8",
+          "type": "EvalExprActionComponent",
+          "left": 248,
+          "top": -112,
+          "width": 87,
+          "height": 54,
+          "customInputs": [],
+          "customOutputs": [],
+          "expression": "x"
+        },
+        {
+          "objID": "2f959d0b-71cf-4b7a-ef76-de9467baabec",
+          "type": "SetVariableActionComponent",
+          "left": 39,
+          "top": 122,
+          "width": 129,
+          "height": 55,
+          "customInputs": [],
+          "customOutputs": [],
+          "entries": [
+            {
+              "objID": "14ad637c-a63b-475a-f4ab-ec9d8d6da6b1",
+              "variable": "x",
+              "value": "x * base"
+            }
+          ]
+        },
+        {
+          "objID": "b0e6f149-f3e3-4cd8-e844-9b2af2283a27",
+          "type": "SwitchActionComponent",
+          "left": -175,
+          "top": 132,
+          "width": 158,
+          "height": 73,
+          "customInputs": [
+            {
+              "objID": "17e7193f-d2eb-48fc-c21a-5c06e78fe105",
+              "name": "exp",
+              "type": "integer"
+            }
+          ],
+          "customOutputs": [],
+          "tests": [
+            {
+              "objID": "db067b49-3c1a-4d78-e76f-eea1220002c3",
+              "condition": "exp >= 0",
+              "outputName": "pos",
+              "outputValue": "1"
+            },
+            {
+              "objID": "1902ee22-3804-4b34-f0ee-676ff38fca5c",
+              "condition": "exp < 0",
+              "outputName": "neg",
+              "outputValue": "1"
+            }
+          ]
+        },
+        {
+          "objID": "13c3b800-ec48-49a7-ba17-49218c7a897f",
+          "type": "SetVariableActionComponent",
+          "left": 184,
+          "top": 177,
+          "width": 129,
+          "height": 55,
+          "customInputs": [],
+          "customOutputs": [],
+          "entries": [
+            {
+              "objID": "1d37b20a-2fb1-4bca-a7a4-738fbe252922",
+              "variable": "x",
+              "value": "x / base"
+            }
+          ]
+        },
+        {
+          "objID": "fc417c49-7430-4b0d-98a4-028e8bb74c23",
+          "type": "EvalExprActionComponent",
+          "left": -303,
+          "top": 15,
+          "width": 165,
+          "height": 54,
+          "customInputs": [
+            {
+              "objID": "01b85822-d57c-45b6-dcb8-f161c71a6c51",
+              "name": "in",
+              "type": "integer"
+            }
+          ],
+          "customOutputs": [],
+          "expression": "Math.abs(in)"
+        }
+      ],
+      "connectionLines": [
+        {
+          "objID": "18218d0f-f548-43be-de7a-36b3cd2affe8",
+          "source": "c83629ee-aa77-4f15-a0ed-593e1345a2bb",
+          "output": "@seqout",
+          "target": "949eb495-ea5e-407b-cdd8-3b9fe140f388",
+          "input": "start"
+        },
+        {
+          "objID": "4342593c-2090-4eae-8165-f8866a333ee0",
+          "source": "949eb495-ea5e-407b-cdd8-3b9fe140f388",
+          "output": "done",
+          "target": "33308e55-ca44-4279-b8e9-07329486c9a8",
+          "input": "@seqin"
+        },
+        {
+          "objID": "318cf954-c62b-4e3a-d797-7106a05a69d2",
+          "source": "33308e55-ca44-4279-b8e9-07329486c9a8",
+          "output": "result",
+          "target": "ea9738ec-db00-4a30-e315-a94ed9ad60e3",
+          "input": "@seqin"
+        },
+        {
+          "objID": "38d61141-de00-4cdc-84b5-df1252d94934",
+          "source": "7eb4960f-f903-4086-897c-1496baf7b2cd",
+          "output": "@seqout",
+          "target": "c83629ee-aa77-4f15-a0ed-593e1345a2bb",
+          "input": "in"
+        },
+        {
+          "objID": "e1ac709d-a883-4b9c-aef7-367dd6e142c1",
+          "source": "2f959d0b-71cf-4b7a-ef76-de9467baabec",
+          "output": "@seqout",
+          "target": "949eb495-ea5e-407b-cdd8-3b9fe140f388",
+          "input": "next"
+        },
+        {
+          "objID": "6e176b8a-16e4-45ee-939d-e81f75fd3e8b",
+          "source": "949eb495-ea5e-407b-cdd8-3b9fe140f388",
+          "output": "@seqout",
+          "target": "b0e6f149-f3e3-4cd8-e844-9b2af2283a27",
+          "input": "@seqin"
+        },
+        {
+          "objID": "9c5c873f-d4aa-472a-b530-c06791231e22",
+          "source": "b0e6f149-f3e3-4cd8-e844-9b2af2283a27",
+          "output": "pos",
+          "target": "2f959d0b-71cf-4b7a-ef76-de9467baabec",
+          "input": "@seqin"
+        },
+        {
+          "objID": "f1b270c5-7c1a-432b-afd5-2719f674c6ea",
+          "source": "2e3d1ee7-0ada-4c2a-f8e9-1c0a8ba866dd",
+          "output": "@seqout",
+          "target": "b0e6f149-f3e3-4cd8-e844-9b2af2283a27",
+          "input": "exp"
+        },
+        {
+          "objID": "52ea1d04-feb7-4c60-da75-cf717d7dbcee",
+          "source": "b0e6f149-f3e3-4cd8-e844-9b2af2283a27",
+          "output": "neg",
+          "target": "13c3b800-ec48-49a7-ba17-49218c7a897f",
+          "input": "@seqin"
+        },
+        {
+          "objID": "b5c6fd1d-0c49-49e4-aa46-64ae217fa710",
+          "source": "13c3b800-ec48-49a7-ba17-49218c7a897f",
+          "output": "@seqout",
+          "target": "949eb495-ea5e-407b-cdd8-3b9fe140f388",
+          "input": "next"
+        },
+        {
+          "objID": "84e5211f-83d8-4213-b27d-210d87cbba11",
+          "source": "2e3d1ee7-0ada-4c2a-f8e9-1c0a8ba866dd",
+          "output": "@seqout",
+          "target": "fc417c49-7430-4b0d-98a4-028e8bb74c23",
+          "input": "in"
+        },
+        {
+          "objID": "ddf8e5e9-f40e-4be5-ba39-cbad1e81a198",
+          "source": "fc417c49-7430-4b0d-98a4-028e8bb74c23",
+          "output": "result",
+          "target": "949eb495-ea5e-407b-cdd8-3b9fe140f388",
+          "input": "exp"
+        }
+      ],
+      "localVariables": [
+        {
+          "objID": "64928e3b-4e07-45b2-8759-f6e7259caf12",
+          "name": "x",
+          "type": "float",
+          "defaultValue": "0",
+          "persistent": false
+        },
+        {
+          "objID": "a9a76788-16fb-4c17-a13d-81684ad5a28e",
+          "name": "i",
+          "type": "integer",
+          "defaultValue": "0",
+          "persistent": false
+        },
+        {
+          "objID": "97435abd-c283-4cd1-d567-e8fcb5b5089a",
+          "name": "base",
+          "type": "float",
+          "defaultValue": "1",
+          "persistent": false
+        }
+      ],
+      "name": "pow",
+      "implementationType": "flow"
+    }
+  ],
   "pages": [
     {
       "objID": "4b40eba7-b31a-468a-b887-11dfd0b6637f",
@@ -638,7 +1540,7 @@
           "type": "LVGLActionComponent",
           "left": 15,
           "top": -162,
-          "width": 656,
+          "width": 693,
           "height": 55,
           "customInputs": [],
           "customOutputs": [],
@@ -672,7 +1574,7 @@
         {
           "objID": "47929673-228a-4de5-947b-a07051a84958",
           "type": "DelayActionComponent",
-          "left": 709,
+          "left": 787,
           "top": -162,
           "width": 87,
           "height": 55,
@@ -685,7 +1587,7 @@
           "type": "LVGLActionComponent",
           "left": 315,
           "top": -3,
-          "width": 213,
+          "width": 250,
           "height": 55,
           "customInputs": [],
           "customOutputs": [],
@@ -705,7 +1607,7 @@
           "type": "LVGLActionComponent",
           "left": 315,
           "top": 90,
-          "width": 213,
+          "width": 250,
           "height": 55,
           "customInputs": [],
           "customOutputs": [],
@@ -829,49 +1731,6 @@
       "objID": "29b51502-d4f6-4573-adbf-bb065e0e520c",
       "components": [
         {
-          "objID": "76235215-47b8-45a2-9e52-ef6500e92a4a",
-          "type": "LVGLLabelWidget",
-          "left": 0,
-          "top": 0,
-          "width": 46,
-          "height": 16,
-          "customInputs": [],
-          "customOutputs": [],
-          "style": {
-            "objID": "a155c667-bcd4-4354-9cb9-35abcd24e997",
-            "inheritFrom": "default"
-          },
-          "timeline": [],
-          "leftUnit": "px",
-          "topUnit": "px",
-          "widthUnit": "content",
-          "heightUnit": "content",
-          "children": [],
-          "flags": "PRESS_LOCK|CLICK_FOCUSABLE|GESTURE_BUBBLE|SNAPPABLE|SCROLLABLE|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_CHAIN",
-          "hiddenFlagType": "literal",
-          "clickableFlagType": "literal",
-          "scrollbarMode": "auto",
-          "scrollDirection": "all",
-          "checkedStateType": "literal",
-          "disabledStateType": "literal",
-          "states": "",
-          "localStyles": {
-            "objID": "9711a001-ccd9-4b04-8cb6-71e0760f7f61",
-            "definition": {
-              "MAIN": {
-                "DEFAULT": {
-                  "align": "CENTER"
-                }
-              }
-            }
-          },
-          "eventHandlers": [],
-          "text": "Page 1",
-          "textType": "literal",
-          "longMode": "WRAP",
-          "recolor": false
-        },
-        {
           "objID": "71a927ba-fe35-4cee-9993-248aa9ad6d68",
           "type": "LVGLButtonWidget",
           "left": 0,
@@ -965,9 +1824,9 @@
         {
           "objID": "dd306b2c-5415-47ac-87b2-84d9d083e65d",
           "type": "LVGLActionComponent",
-          "left": 258,
-          "top": -96,
-          "width": 207,
+          "left": 328,
+          "top": 330,
+          "width": 244,
           "height": 55,
           "customInputs": [],
           "customOutputs": [],
@@ -981,6 +1840,254 @@
               "delay": 0
             }
           ]
+        },
+        {
+          "objID": "30cf552c-d716-4fff-f079-e606eb871211",
+          "type": "CallActionActionComponent",
+          "left": 85,
+          "top": -201,
+          "width": 128,
+          "height": 111,
+          "customInputs": [],
+          "customOutputs": [],
+          "action": "value2str"
+        },
+        {
+          "objID": "5343864f-ab93-4b26-b46d-0d42dc7fe801",
+          "type": "ConstantActionComponent",
+          "left": -88,
+          "top": -227,
+          "width": 87,
+          "height": 54,
+          "customInputs": [],
+          "customOutputs": [],
+          "value": "2"
+        },
+        {
+          "objID": "f370e3e0-8a61-4f37-b994-a79ba53de0ed",
+          "type": "ConstantActionComponent",
+          "left": -88,
+          "top": -164,
+          "width": 87,
+          "height": 54,
+          "customInputs": [],
+          "customOutputs": [],
+          "value": "true"
+        },
+        {
+          "objID": "670646da-af59-4477-c4b0-0b1800312fda",
+          "type": "WatchVariableActionComponent",
+          "left": -106,
+          "top": -297,
+          "width": 105,
+          "height": 55,
+          "customInputs": [],
+          "customOutputs": [],
+          "variable": "value"
+        },
+        {
+          "objID": "6fa6adf3-13cd-4410-c574-03400b8e2f77",
+          "type": "SetVariableActionComponent",
+          "left": 288,
+          "top": -202,
+          "width": 158,
+          "height": 56,
+          "customInputs": [
+            {
+              "objID": "108bf2e6-1dee-4fc6-991d-72abc26042a6",
+              "name": "in",
+              "type": "string"
+            }
+          ],
+          "customOutputs": [],
+          "entries": [
+            {
+              "objID": "8b6ed122-979e-4a5e-9fce-abcd8bea7926",
+              "variable": "value_str",
+              "value": "in"
+            }
+          ]
+        },
+        {
+          "objID": "7fc284e6-b7ed-4976-c1ba-90bbfd7f6528",
+          "type": "ConstantActionComponent",
+          "left": -88,
+          "top": -97,
+          "width": 87,
+          "height": 54,
+          "customInputs": [],
+          "customOutputs": [],
+          "value": "\"V\""
+        },
+        {
+          "objID": "a5ff5233-c241-44fa-e441-ae6419f0861c",
+          "type": "LVGLTextareaWidget",
+          "left": -1,
+          "top": 104,
+          "width": 240,
+          "height": 42,
+          "customInputs": [],
+          "customOutputs": [],
+          "style": {
+            "objID": "539ed2a9-9415-4157-c5e0-821ebf4fdca6",
+            "inheritFrom": "default"
+          },
+          "timeline": [],
+          "identifier": "formatted_textarea",
+          "leftUnit": "px",
+          "topUnit": "px",
+          "widthUnit": "px",
+          "heightUnit": "px",
+          "children": [],
+          "flags": "PRESS_LOCK|CLICK_FOCUSABLE|GESTURE_BUBBLE|SNAPPABLE|SCROLLABLE|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_CHAIN",
+          "hiddenFlagType": "literal",
+          "clickableFlag": true,
+          "clickableFlagType": "literal",
+          "scrollbarMode": "auto",
+          "scrollDirection": "all",
+          "checkedStateType": "literal",
+          "disabledStateType": "literal",
+          "states": "",
+          "localStyles": {
+            "objID": "e148144c-0c32-4991-8e6d-7a3534f80777",
+            "definition": {
+              "MAIN": {
+                "DEFAULT": {
+                  "text_align": "CENTER",
+                  "text_font": "MONTSERRAT_20"
+                }
+              }
+            }
+          },
+          "eventHandlers": [],
+          "text": "value_str",
+          "textType": "expression",
+          "placeholder": "",
+          "oneLineMode": true,
+          "passwordMode": false,
+          "acceptedCharacters": "",
+          "maxTextLength": 128
+        },
+        {
+          "objID": "5c49db1c-e4c4-45c8-a99a-79f21cc8413a",
+          "type": "LVGLTextareaWidget",
+          "left": 0,
+          "top": 21,
+          "width": 241,
+          "height": 42,
+          "customInputs": [],
+          "customOutputs": [],
+          "style": {
+            "objID": "b8d2f554-0ab1-4867-d5ff-4a30a7a6b5ca",
+            "inheritFrom": "default"
+          },
+          "timeline": [],
+          "identifier": "value_textarea",
+          "leftUnit": "px",
+          "topUnit": "px",
+          "widthUnit": "px",
+          "heightUnit": "px",
+          "children": [],
+          "flags": "PRESS_LOCK|CLICK_FOCUSABLE|GESTURE_BUBBLE|SNAPPABLE|SCROLLABLE|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_CHAIN",
+          "hiddenFlagType": "literal",
+          "clickableFlag": true,
+          "clickableFlagType": "literal",
+          "scrollbarMode": "auto",
+          "scrollDirection": "all",
+          "checkedStateType": "literal",
+          "disabledStateType": "literal",
+          "states": "",
+          "localStyles": {
+            "objID": "4252f1b7-e80e-4b80-efb7-868e8b9e50ef",
+            "definition": {
+              "MAIN": {
+                "DEFAULT": {
+                  "text_align": "CENTER",
+                  "text_font": "MONTSERRAT_20"
+                }
+              }
+            }
+          },
+          "eventHandlers": [],
+          "text": "value",
+          "textType": "expression",
+          "placeholder": "",
+          "oneLineMode": true,
+          "passwordMode": false,
+          "acceptedCharacters": "",
+          "maxTextLength": 128
+        },
+        {
+          "objID": "96ab8a90-663e-49e7-a1d4-be2f428ea68e",
+          "type": "LVGLLabelWidget",
+          "left": 0,
+          "top": 0,
+          "width": 39,
+          "height": 16,
+          "customInputs": [],
+          "customOutputs": [],
+          "style": {
+            "objID": "58af3951-675d-4918-c675-02c21119587b",
+            "inheritFrom": "default"
+          },
+          "timeline": [],
+          "leftUnit": "px",
+          "topUnit": "px",
+          "widthUnit": "content",
+          "heightUnit": "content",
+          "children": [],
+          "flags": "PRESS_LOCK|CLICK_FOCUSABLE|GESTURE_BUBBLE|SNAPPABLE|SCROLLABLE|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_CHAIN",
+          "hiddenFlagType": "literal",
+          "clickableFlagType": "literal",
+          "scrollbarMode": "auto",
+          "scrollDirection": "all",
+          "checkedStateType": "literal",
+          "disabledStateType": "literal",
+          "states": "",
+          "localStyles": {
+            "objID": "cbd1ef04-88de-4d1e-dced-6fa190e5cf4e"
+          },
+          "eventHandlers": [],
+          "text": "Float:",
+          "textType": "literal",
+          "longMode": "WRAP",
+          "recolor": false
+        },
+        {
+          "objID": "d99c5dba-df64-4b0f-aa66-75caa6a6aede",
+          "type": "LVGLLabelWidget",
+          "left": 0,
+          "top": 83,
+          "width": 128,
+          "height": 16,
+          "customInputs": [],
+          "customOutputs": [],
+          "style": {
+            "objID": "e0bee455-6ac9-4f67-9025-36fd24cd9a37",
+            "inheritFrom": "default"
+          },
+          "timeline": [],
+          "leftUnit": "px",
+          "topUnit": "px",
+          "widthUnit": "content",
+          "heightUnit": "content",
+          "children": [],
+          "flags": "PRESS_LOCK|CLICK_FOCUSABLE|GESTURE_BUBBLE|SNAPPABLE|SCROLLABLE|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_CHAIN",
+          "hiddenFlagType": "literal",
+          "clickableFlagType": "literal",
+          "scrollbarMode": "auto",
+          "scrollDirection": "all",
+          "checkedStateType": "literal",
+          "disabledStateType": "literal",
+          "states": "",
+          "localStyles": {
+            "objID": "cafcf184-47fc-4e20-8e8f-f48b255f9da1"
+          },
+          "eventHandlers": [],
+          "text": "Formatted string:",
+          "textType": "literal",
+          "longMode": "WRAP",
+          "recolor": false
         }
       ],
       "connectionLines": [
@@ -990,9 +2097,59 @@
           "output": "CLICKED",
           "target": "dd306b2c-5415-47ac-87b2-84d9d083e65d",
           "input": "@seqin"
+        },
+        {
+          "objID": "a11dcf8c-4b04-45a3-d797-840eb0df7fdb",
+          "source": "670646da-af59-4477-c4b0-0b1800312fda",
+          "output": "variable",
+          "target": "30cf552c-d716-4fff-f079-e606eb871211",
+          "input": "d29207eb-6d69-4cd5-a87a-3609018d40ed"
+        },
+        {
+          "objID": "ffa6313c-601f-41a4-9f89-ad2c8f53bed3",
+          "source": "5343864f-ab93-4b26-b46d-0d42dc7fe801",
+          "output": "value",
+          "target": "30cf552c-d716-4fff-f079-e606eb871211",
+          "input": "3ae95035-e9bf-4c2c-b0ad-eecda280f02e"
+        },
+        {
+          "objID": "5575f43a-58b2-4162-dc95-92559544a4ce",
+          "source": "f370e3e0-8a61-4f37-b994-a79ba53de0ed",
+          "output": "value",
+          "target": "30cf552c-d716-4fff-f079-e606eb871211",
+          "input": "2edfae8e-1fa5-4cf4-8064-0b1e01c31497"
+        },
+        {
+          "objID": "6b1e9e9e-34b5-49b8-86cd-1a6469e8a0e8",
+          "source": "7fc284e6-b7ed-4976-c1ba-90bbfd7f6528",
+          "output": "value",
+          "target": "30cf552c-d716-4fff-f079-e606eb871211",
+          "input": "848e1da7-c149-4547-960d-8f7738f4d670"
+        },
+        {
+          "objID": "3397bac1-1dfc-4de9-f880-7e47ff6d1b56",
+          "source": "30cf552c-d716-4fff-f079-e606eb871211",
+          "output": "7703da98-7581-4fe0-b380-26239f14e184",
+          "target": "6fa6adf3-13cd-4410-c574-03400b8e2f77",
+          "input": "in"
         }
       ],
-      "localVariables": [],
+      "localVariables": [
+        {
+          "objID": "7c98b68e-6dfa-4a29-cb05-e7938d8dc547",
+          "name": "value_str",
+          "type": "string",
+          "defaultValue": "\"\"",
+          "persistent": false
+        },
+        {
+          "objID": "581a9f85-6892-4f2f-dbcd-4feeeec27f5c",
+          "name": "value",
+          "type": "float",
+          "defaultValue": "2341.567",
+          "persistent": false
+        }
+      ],
       "name": "Page1",
       "left": 0,
       "top": 0,
@@ -1177,7 +2334,7 @@
           "type": "LVGLActionComponent",
           "left": 308,
           "top": -105,
-          "width": 207,
+          "width": 244,
           "height": 55,
           "customInputs": [],
           "customOutputs": [],

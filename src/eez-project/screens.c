@@ -6,36 +6,66 @@
 #include "ui.h"
 
 objects_t objects;
+lv_obj_t *tick_value_change_obj;
 
 static void event_handler_cb_main_page1_button(lv_event_t *e) {
     lv_event_code_t event = lv_event_get_code(e);
+    void *flowState = e->user_data;
     if (event == LV_EVENT_CLICKED) {
-        flowPropagateValue(0, 5, 1);
+        flowPropagateValue(flowState, 5, 1);
     }
 }
 
 static void event_handler_cb_main_page2_button(lv_event_t *e) {
     lv_event_code_t event = lv_event_get_code(e);
+    void *flowState = e->user_data;
     if (event == LV_EVENT_CLICKED) {
-        flowPropagateValue(0, 7, 1);
+        flowPropagateValue(flowState, 7, 1);
     }
 }
 
 static void event_handler_cb_page1_home_button_1(lv_event_t *e) {
     lv_event_code_t event = lv_event_get_code(e);
+    void *flowState = e->user_data;
     if (event == LV_EVENT_CLICKED) {
-        flowPropagateValue(1, 0, 1);
+        flowPropagateValue(flowState, 1, 1);
+    }
+}
+
+static void event_handler_cb_page1_formatted_textarea(lv_event_t *e) {
+    lv_event_code_t event = lv_event_get_code(e);
+    void *flowState = e->user_data;
+    if (event == LV_EVENT_VALUE_CHANGED) {
+        lv_obj_t *ta = lv_event_get_target(e);
+        const char *value = lv_textarea_get_text(ta);
+        if (tick_value_change_obj != ta) {
+            assignStringProperty(flowState, 9, 2, value, "Failed to assign Text in Textarea widget");
+        }
+    }
+}
+
+static void event_handler_cb_page1_value_textarea(lv_event_t *e) {
+    lv_event_code_t event = lv_event_get_code(e);
+    void *flowState = e->user_data;
+    if (event == LV_EVENT_VALUE_CHANGED) {
+        lv_obj_t *ta = lv_event_get_target(e);
+        const char *value = lv_textarea_get_text(ta);
+        if (tick_value_change_obj != ta) {
+            assignStringProperty(flowState, 10, 2, value, "Failed to assign Text in Textarea widget");
+        }
     }
 }
 
 static void event_handler_cb_page2_home_button_2(lv_event_t *e) {
     lv_event_code_t event = lv_event_get_code(e);
+    void *flowState = e->user_data;
     if (event == LV_EVENT_CLICKED) {
-        flowPropagateValue(2, 2, 1);
+        flowPropagateValue(flowState, 2, 1);
     }
 }
 
 void create_screen_main() {
+    void *flowState = getFlowState(0, 0);
     lv_obj_t *obj = lv_obj_create(0);
     objects.main = obj;
     lv_obj_set_pos(obj, 0, 0);
@@ -82,7 +112,7 @@ void create_screen_main() {
                     objects.page1_button = obj;
                     lv_obj_set_pos(obj, 2, 69);
                     lv_obj_set_size(obj, 94, 34);
-                    lv_obj_add_event_cb(obj, event_handler_cb_main_page1_button, LV_EVENT_ALL, 0);
+                    lv_obj_add_event_cb(obj, event_handler_cb_main_page1_button, LV_EVENT_ALL, flowState);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                     {
@@ -102,7 +132,7 @@ void create_screen_main() {
                     objects.page2_button = obj;
                     lv_obj_set_pos(obj, 116, 69);
                     lv_obj_set_size(obj, 94, 34);
-                    lv_obj_add_event_cb(obj, event_handler_cb_main_page2_button, LV_EVENT_ALL, 0);
+                    lv_obj_add_event_cb(obj, event_handler_cb_main_page2_button, LV_EVENT_ALL, flowState);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                     {
@@ -140,9 +170,11 @@ void create_screen_main() {
 }
 
 void tick_screen_main() {
+    void *flowState = getFlowState(0, 0);
 }
 
 void create_screen_page1() {
+    void *flowState = getFlowState(0, 1);
     lv_obj_t *obj = lv_obj_create(0);
     objects.page1 = obj;
     lv_obj_set_pos(obj, 0, 0);
@@ -151,19 +183,12 @@ void create_screen_page1() {
     {
         lv_obj_t *parent_obj = obj;
         {
-            lv_obj_t *obj = lv_label_create(parent_obj);
-            lv_obj_set_pos(obj, 0, 0);
-            lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-            lv_label_set_text(obj, "Page 1");
-            lv_obj_set_style_align(obj, LV_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-        }
-        {
             // home_button_1
             lv_obj_t *obj = lv_btn_create(parent_obj);
             objects.home_button_1 = obj;
             lv_obj_set_pos(obj, 0, -20);
             lv_obj_set_size(obj, 94, 34);
-            lv_obj_add_event_cb(obj, event_handler_cb_page1_home_button_1, LV_EVENT_ALL, 0);
+            lv_obj_add_event_cb(obj, event_handler_cb_page1_home_button_1, LV_EVENT_ALL, flowState);
             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
             lv_obj_set_style_align(obj, LV_ALIGN_BOTTOM_MID, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -178,13 +203,71 @@ void create_screen_page1() {
                 }
             }
         }
+        {
+            // formatted_textarea
+            lv_obj_t *obj = lv_textarea_create(parent_obj);
+            objects.formatted_textarea = obj;
+            lv_obj_set_pos(obj, -1, 104);
+            lv_obj_set_size(obj, 240, 42);
+            lv_textarea_set_max_length(obj, 128);
+            lv_textarea_set_one_line(obj, true);
+            lv_textarea_set_password_mode(obj, false);
+            lv_obj_add_event_cb(obj, event_handler_cb_page1_formatted_textarea, LV_EVENT_ALL, flowState);
+            lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_font(obj, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+        }
+        {
+            // value_textarea
+            lv_obj_t *obj = lv_textarea_create(parent_obj);
+            objects.value_textarea = obj;
+            lv_obj_set_pos(obj, 0, 21);
+            lv_obj_set_size(obj, 241, 42);
+            lv_textarea_set_max_length(obj, 128);
+            lv_textarea_set_one_line(obj, true);
+            lv_textarea_set_password_mode(obj, false);
+            lv_obj_add_event_cb(obj, event_handler_cb_page1_value_textarea, LV_EVENT_ALL, flowState);
+            lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_font(obj, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+        }
+        {
+            lv_obj_t *obj = lv_label_create(parent_obj);
+            lv_obj_set_pos(obj, 0, 0);
+            lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+            lv_label_set_text(obj, "Float:");
+        }
+        {
+            lv_obj_t *obj = lv_label_create(parent_obj);
+            lv_obj_set_pos(obj, 0, 83);
+            lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+            lv_label_set_text(obj, "Formatted string:");
+        }
     }
 }
 
 void tick_screen_page1() {
+    void *flowState = getFlowState(0, 1);
+    {
+        const char *new_val = evalTextProperty(flowState, 9, 2, "Failed to evaluate Text in Textarea widget");
+        const char *cur_val = lv_textarea_get_text(objects.formatted_textarea);
+        if (strcmp(new_val, cur_val) != 0) {
+            tick_value_change_obj = objects.formatted_textarea;
+            lv_textarea_set_text(objects.formatted_textarea, new_val);
+            tick_value_change_obj = NULL;
+        }
+    }
+    {
+        const char *new_val = evalTextProperty(flowState, 10, 2, "Failed to evaluate Text in Textarea widget");
+        const char *cur_val = lv_textarea_get_text(objects.value_textarea);
+        if (strcmp(new_val, cur_val) != 0) {
+            tick_value_change_obj = objects.value_textarea;
+            lv_textarea_set_text(objects.value_textarea, new_val);
+            tick_value_change_obj = NULL;
+        }
+    }
 }
 
 void create_screen_page2() {
+    void *flowState = getFlowState(0, 2);
     lv_obj_t *obj = lv_obj_create(0);
     objects.page2 = obj;
     lv_obj_set_pos(obj, 0, 0);
@@ -204,7 +287,7 @@ void create_screen_page2() {
         }
         {
             lv_obj_t *obj = lv_keyboard_create(parent_obj);
-            objects.keyboard_1 = obj;
+            objects._obj_keyboard_0 = obj;
             lv_obj_set_pos(obj, 0, -78);
             lv_obj_set_size(obj, 240, 163);
         }
@@ -214,7 +297,7 @@ void create_screen_page2() {
             objects.home_button_2 = obj;
             lv_obj_set_pos(obj, 0, -20);
             lv_obj_set_size(obj, 94, 34);
-            lv_obj_add_event_cb(obj, event_handler_cb_page2_home_button_2, LV_EVENT_ALL, 0);
+            lv_obj_add_event_cb(obj, event_handler_cb_page2_home_button_2, LV_EVENT_ALL, flowState);
             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
             lv_obj_set_style_align(obj, LV_ALIGN_BOTTOM_MID, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -230,10 +313,11 @@ void create_screen_page2() {
             }
         }
     }
-    lv_keyboard_set_textarea(objects.keyboard_1, objects.txtarea1);
+    lv_keyboard_set_textarea(objects._obj_keyboard_0, objects.txtarea1);
 }
 
 void tick_screen_page2() {
+    void *flowState = getFlowState(0, 2);
 }
 
 
