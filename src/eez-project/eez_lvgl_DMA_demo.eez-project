@@ -91,7 +91,11 @@
         }
       ],
       "destinationFolder": ".",
-      "lvglInclude": "lvgl.h"
+      "lvglInclude": "lvgl.h",
+      "generateSourceCodeForEezFramework": false,
+      "compressFlowDefinition": true,
+      "executionQueueSize": 1000,
+      "expressionEvaluatorStackSize": 20
     }
   },
   "variables": {
@@ -2266,8 +2270,8 @@
           "type": "LVGLActionComponent",
           "left": 308,
           "top": -105,
-          "width": 244,
-          "height": 55,
+          "width": 243,
+          "height": 54,
           "customInputs": [],
           "customOutputs": [],
           "actions": [
@@ -2363,6 +2367,7 @@
               },
               "timeline": [],
               "eventHandlers": [],
+              "identifier": "keyboard",
               "leftUnit": "px",
               "topUnit": "px",
               "widthUnit": "px",

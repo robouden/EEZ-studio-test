@@ -33,7 +33,7 @@ void ui_init_input_groups() {
     lv_obj_add_event_cb(objects.page1, on_screen_loaded, LV_EVENT_SCREEN_LOADED, 0);
     lv_obj_add_event_cb(objects.page2, on_screen_loaded, LV_EVENT_SCREEN_LOADED, 0);
 
-    lv_obj_add_event_cb(objects._obj_keyboard_0, on_keyboard_apply, LV_EVENT_READY, 0);
+    lv_obj_add_event_cb(objects.keyboard, on_keyboard_apply, LV_EVENT_READY, 0);
 
     update_keypad_group(objects.main);
 }
