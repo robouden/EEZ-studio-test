@@ -96,7 +96,11 @@
         }
       ],
       "destinationFolder": ".",
-      "lvglInclude": "lvgl.h"
+      "lvglInclude": "lvgl.h",
+      "generateSourceCodeForEezFramework": false,
+      "compressFlowDefinition": false,
+      "executionQueueSize": 1000,
+      "expressionEvaluatorStackSize": 20
     }
   },
   "variables": {
@@ -296,8 +300,6 @@
               "flags": "PRESS_LOCK|ADV_HITTEST|CLICK_FOCUSABLE|GESTURE_BUBBLE|SNAPPABLE|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_CHAIN",
               "hiddenFlagType": "literal",
               "clickableFlagType": "literal",
-              "scrollbarMode": "auto",
-              "scrollDirection": "all",
               "checkedStateType": "literal",
               "disabledStateType": "literal",
               "states": "",
@@ -336,8 +338,6 @@
               "flags": "PRESS_LOCK|ADV_HITTEST|CLICK_FOCUSABLE|GESTURE_BUBBLE|SNAPPABLE|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_CHAIN",
               "hiddenFlagType": "literal",
               "clickableFlagType": "literal",
-              "scrollbarMode": "auto",
-              "scrollDirection": "all",
               "checkedStateType": "literal",
               "disabledStateType": "literal",
               "states": "",
@@ -375,8 +375,6 @@
               "flags": "PRESS_LOCK|CLICK_FOCUSABLE|GESTURE_BUBBLE|SNAPPABLE|SCROLLABLE|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_CHAIN",
               "hiddenFlagType": "literal",
               "clickableFlagType": "literal",
-              "scrollbarMode": "auto",
-              "scrollDirection": "all",
               "checkedStateType": "literal",
               "disabledStateType": "literal",
               "states": "",
@@ -449,8 +447,6 @@
                   "flags": "PRESS_LOCK|CLICK_FOCUSABLE|GESTURE_BUBBLE|SNAPPABLE|SCROLLABLE|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_CHAIN",
                   "hiddenFlagType": "literal",
                   "clickableFlagType": "literal",
-                  "scrollbarMode": "auto",
-                  "scrollDirection": "all",
                   "checkedStateType": "literal",
                   "disabledStateType": "literal",
                   "states": "",
@@ -475,8 +471,6 @@
               "hiddenFlagType": "literal",
               "clickableFlag": true,
               "clickableFlagType": "literal",
-              "scrollbarMode": "auto",
-              "scrollDirection": "all",
               "checkedStateType": "literal",
               "disabledStateType": "literal",
               "states": "",
@@ -537,8 +531,6 @@
                   "flags": "PRESS_LOCK|CLICK_FOCUSABLE|GESTURE_BUBBLE|SNAPPABLE|SCROLLABLE|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_CHAIN",
                   "hiddenFlagType": "literal",
                   "clickableFlagType": "literal",
-                  "scrollbarMode": "auto",
-                  "scrollDirection": "all",
                   "checkedStateType": "literal",
                   "disabledStateType": "literal",
                   "states": "",
@@ -563,8 +555,6 @@
               "hiddenFlagType": "literal",
               "clickableFlag": true,
               "clickableFlagType": "literal",
-              "scrollbarMode": "auto",
-              "scrollDirection": "all",
               "checkedStateType": "literal",
               "disabledStateType": "literal",
               "states": "",
@@ -577,8 +567,6 @@
           "hiddenFlagType": "literal",
           "clickableFlag": true,
           "clickableFlagType": "literal",
-          "scrollbarMode": "auto",
-          "scrollDirection": "all",
           "checkedStateType": "literal",
           "disabledStateType": "literal",
           "states": "",
@@ -711,6 +699,9 @@
       "alwaysBuild": false
     }
   ],
+  "changes": {
+    "objID": "c82adf49-b5e5-4f21-a6b7-ea2a89a5910b"
+  },
   "colors": [
     {
       "objID": "a3333659-ca35-4e6c-e434-d9dd1aa3b7d8",
